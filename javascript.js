@@ -3,9 +3,7 @@ const getComputerChoice = () => {
   return choice;
 };
 
-const getPlayerChoice = () => {
-  let selection = prompt("Type Rock, Paper or Scissors to play.");
-  selection = selection.toLowerCase();
+const getPlayerChoice = (selection) => {
   switch (selection) {
     case "rock":
       return 1;
@@ -30,28 +28,58 @@ const choiceMap = (choice) => {
 const playRound = (playerSelection, computerSelection) => {
   const playerChoice = choiceMap(playerSelection);
   const computerChoice = choiceMap(computerSelection);
+  const resultp = document.getElementById("results");
 
   if (playerSelection == computerSelection) {
-    console.log(
-      "Draw. " + playerChoice + " and " + computerChoice + " are equal."
-    );
+    resultp.textContent = `Draw. ${playerChoice} and ${computerChoice} are equal.`;
     return 0;
   } else if (
     playerSelection - computerSelection == 1 ||
     playerSelection - computerSelection == -2
   ) {
-    console.log("You win!. " + playerChoice + " beats " + computerChoice);
+    resultp.textContent = `You win! ${playerChoice} beats ${computerChoice}`;
     return 1;
   } else {
-    console.log("You lose!. " + computerChoice + " beats " + playerChoice);
+    resultp.textContent = `You lose! ${computerChoice} beats ${playerChoice}`;
     return -1;
   }
 };
 
-const game = () => {
-  for (let i = 1; i <= 5; i++) {
-    playRound(getPlayerChoice(), getComputerChoice());
-  }
-};
+const btns = document.querySelectorAll("button");
+const winp = document.getElementById("winValue");
+const lossp = document.getElementById("lossValue");
+const winner = document.getElementById("winner");
 
-game();
+let winTally = 0;
+let lossTally = 0;
+
+btns.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    let result = playRound(getPlayerChoice(btn.id), getComputerChoice());
+    switch (result) {
+      case 0:
+        return;
+      case 1:
+        winTally += 1;
+        winp.textContent = winTally;
+
+        if (winTally == 5) {
+          winner.textContent = "Player Wins!";
+        }
+        return;
+      case -1:
+        lossTally += 1;
+        lossp.textContent = lossTally;
+
+        if (lossTally == 5) {
+          winner.textContent = "Computer Wins!";
+        }
+        return;
+    }
+  });
+});
+
+if (winTally == 5 || lossTally == 5) {
+  console.log(winTally);
+  winner.textContent = `${winTally == 5 ? "Player Wins!" : "Computer Wins!"}`;
+}
